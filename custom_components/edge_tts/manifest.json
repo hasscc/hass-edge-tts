@@ -1,0 +1,10 @@
+{
+  "domain": "edge_tts",
+  "name": "Microsoft Edge TTS",
+  "version": "0.0.1",
+  "documentation": "https://github.com/hasscc/hass-edge-tts",
+  "issue_tracker": "https://github.com/hasscc/hass-edge-tts/issues",
+  "requirements": ["edge-tts==2.2.2"],
+  "codeowners": [],
+  "iot_class": "cloud_push"
+}
