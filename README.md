@@ -9,7 +9,7 @@ This component is based on the TTS service of Microsoft Edge browser, no need to
 
 ```shell
 # Auto install via terminal shell
-wget -q -O - https://cdn.jsdelivr.net/gh/al-one/hass-xiaomi-miot/install.sh | DOMAIN=edge_tts REPO_PATH=hasscc/hass-edge-tts bash -
+wget -q -O - https://cdn.jsdelivr.net/gh/al-one/hass-xiaomi-miot/install.sh | DOMAIN=edge_tts REPO_PATH=hasscc/hass-edge-tts ARCHIVE_TAG=main bash -
 ```
 
 

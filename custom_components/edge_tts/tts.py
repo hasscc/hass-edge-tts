@@ -11,6 +11,12 @@ _LOGGER = logging.getLogger(__name__)
 SUPPORTED_VOICES = {
     'zh-CN-XiaoxiaoNeural': 'zh-CN',
     'zh-CN-YunyangNeural': 'zh-CN',
+    'zh-CN-YunyeNeural': 'zh-CN',
+    'zh-CN-YunxiNeural': 'zh-CN',
+    'zh-CN-XiaohanNeural': 'zh-CN',
+    'zh-CN-XiaomoNeural': 'zh-CN',
+    'zh-CN-XiaoxuanNeural': 'zh-CN',
+    'zh-CN-XiaoruiNeural': 'zh-CN',
     'zh-HK-HiuMaanNeural': 'zh-HK',
     'zh-TW-HsiaoChenNeural': 'zh-TW',
     'ar-EG-SalmaNeural': 'ar-EG',
