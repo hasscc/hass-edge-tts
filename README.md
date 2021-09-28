@@ -19,13 +19,13 @@ wget -q -O - https://cdn.jsdelivr.net/gh/al-one/hass-xiaomi-miot/install.sh | DO
 # configuration.yaml
 tts:
   - platform: edge_tts
-    language: zh-CN # Default language (Optional)
+    language: zh-CN # Default language or voice (Optional)
 ```
 
 ### Supported languages
 
-- https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-languages
-- https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/voices/list?trustedclienttoken=6A5AA1D4EAFF4E9FB37E23D68491D6F4
+- [adjust-speaking-languages](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-languages)
+- [list of voices](https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/voices/list?trustedclienttoken=6A5AA1D4EAFF4E9FB37E23D68491D6F4)
 
 
 ## Using
@@ -34,10 +34,10 @@ tts:
 
 ### Options
 
-- [voice](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#use-multiple-voices)
-- [style](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-styles)
-- styledegree: 0.01 - 2, only for `zh-CN`
-- role: only for `zh-CN-XiaomoNeural` `zh-CN-XiaoxuanNeura`
+- [`voice`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#use-multiple-voices)
+- [`style`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-styles)
+- `styledegree`: 0.01 - 2, only for `zh-CN`
+- `role`: only for `zh-CN-XiaomoNeural` `zh-CN-XiaoxuanNeura`
   - Girl
   - Boy
   - YoungAdultFemale
@@ -46,7 +46,7 @@ tts:
   - OlderAdultMale
   - SeniorFemale
   - SeniorMale
-- [pitch / rate / volume](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-prosody)
+- [`pitch` / `rate` / `volume`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-prosody)
 
 ### Basic example
 
@@ -55,6 +55,7 @@ service: tts.edge_tts_say
 data:
   entity_id: media_player.your_player_entity_id
   message: Hello
+  language: zh-CN-XiaoxiaoNeural # Language or voice (Optional)
 
 ```
 
@@ -68,11 +69,17 @@ data:
   language: zh-CN
   cache: true
   options:
-    voice: zh-CN-XiaoxiaoNeural
-    style: sed
+    voice: zh-CN-XiaomoNeural
+    style: cheerful
     styledegree: 2
     role: Girl
     pitch: +0Hz
     rate: +0%
     volume: +10%
 ```
+
+
+## Thanks
+
+- https://github.com/rany2/edge-tts
+- https://github.com/ag2s20150909/TTS
