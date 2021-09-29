@@ -79,6 +79,15 @@ data:
     volume: +10%
 ```
 
+### Curl example
+
+```shell
+curl -X POST -H "Authorization: Bearer <ACCESS TOKEN>" \
+     -H "Content-Type: application/json" \
+     -d '{"platform": "edge_tts", "message": "早上好", "language": "zh-CN-XiaoxuanNeura", "cache": false, "options": {"style": "cheerful", "role": "Boy"}}' \
+     http://home-assistant.local:8123/api/tts_get_url
+```
+
 
 ## Thanks
 
