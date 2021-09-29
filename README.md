@@ -31,6 +31,7 @@ tts:
     style: cheerful
     styledegree: 2
     role: Girl
+    volume: 100.0
 ```
 
 #### Supported languages
