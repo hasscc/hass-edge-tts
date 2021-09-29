@@ -49,7 +49,7 @@ tts:
 - [`voice`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#use-multiple-voices)
 - [`style`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-styles)
 - `styledegree`: 0.01 - 2, only for `zh-CN`
-- `role`: only for `zh-CN-XiaomoNeural` `zh-CN-XiaoxuanNeura`
+- `role`: only for `zh-CN-XiaomoNeural` `zh-CN-XiaoxuanNeural`
   - Girl
   - Boy
   - YoungAdultFemale
@@ -95,7 +95,7 @@ data:
 ```shell
 curl -X POST -H "Authorization: Bearer <ACCESS TOKEN>" \
      -H "Content-Type: application/json" \
-     -d '{"platform": "edge_tts", "message": "早上好", "language": "zh-CN-XiaoxuanNeura", "cache": false, "options": {"style": "cheerful", "role": "Boy"}}' \
+     -d '{"platform": "edge_tts", "message": "早上好", "language": "zh-CN-XiaoxuanNeural", "cache": false, "options": {"style": "cheerful", "role": "Boy"}}' \
      http://home-assistant.local:8123/api/tts_get_url
 ```
 
