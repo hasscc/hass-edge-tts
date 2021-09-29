@@ -113,6 +113,8 @@ class SpeechProvider(Provider):
         self.name = 'Edge TTS'
         self.hass = hass
         self._config = config or {}
+        self._style_options = ['style', 'styledegree', 'role']
+        self._prosody_options = ['pitch', 'contour', 'range', 'rate', 'duration', 'volume']
 
     @property
     def default_language(self):
@@ -127,7 +129,10 @@ class SpeechProvider(Provider):
     @property
     def supported_options(self):
         """Return a list of supported options like voice, emotionen."""
-        return [CONF_LANG, 'voice', 'style', 'styledegree', 'role', 'pitch', 'rate', 'volume']
+        lst = [CONF_LANG, 'voice']
+        lst.extend(self._style_options)
+        lst.extend(self._prosody_options)
+        return lst
 
     async def async_get_tts_audio(self, message, language, options=None):
         """Load TTS audio."""
@@ -145,7 +150,7 @@ class SpeechProvider(Provider):
 
         # https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-styles
         express = []
-        for f in ['style', 'styledegree', 'role']:
+        for f in self._style_options:
             v = opt.get(f)
             if v is not None:
                 express.append(f'{f}="{v}"')
@@ -154,17 +159,21 @@ class SpeechProvider(Provider):
             message = f'<mstts:express-as {express}>{message}</mstts:express-as>'
 
         # https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-prosody
-        pitch = opt.get('pitch') or '+0Hz'
-        rate = opt.get('rate') or '+0%'
-        volume = opt.get('volume') or '+0%'
+        prosodies = []
+        for f in self._prosody_options:
+            v = opt.get(f)
+            if v is not None:
+                prosodies.append(f'{f}="{v}"')
+        if prosodies:
+            prosodies = ' '.join(prosodies)
+            message = f'<prosody {prosodies}>{message}</prosody>'
 
         xml = '<speak version="1.0"' \
               ' xmlns="http://www.w3.org/2001/10/synthesis"' \
               ' xmlns:mstts="https://www.w3.org/2001/mstts"' \
               f' xml:lang="{lang}">' \
               f'<voice name="{voice}">' \
-              f'<prosody pitch="{pitch}" rate="{rate}" volume="{volume}">' \
-              f'{message}</prosody></voice></speak>'
+              f'{message}</voice></speak>'
         _LOGGER.debug('%s: %s', self.name, xml)
         mp3 = b''
         tts = EdgeCommunicate()
@@ -172,9 +181,7 @@ class SpeechProvider(Provider):
             xml,
             customspeak=True,
         ):
-            # 0 - offset
-            # 1 - text
-            # 2 - binary
+            # [offset, text, binary]
             if i[2] is not None:
                 mp3 += i[2]
             elif i[0] is not None:
