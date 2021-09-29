@@ -22,7 +22,18 @@ tts:
     language: zh-CN # Default language or voice (Optional)
 ```
 
-### Supported languages
+#### Configure default options:
+```yaml
+tts:
+  - platform: edge_tts
+    service_name: xiaomo_say
+    language: zh-CN-XiaomoNeural
+    style: cheerful
+    styledegree: 2
+    role: Girl
+```
+
+#### Supported languages
 
 - [speaking languages](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-languages)
 - [list of voices](https://github.com/hasscc/hass-edge-tts/blob/847504e615bde53543542d447491a747ca1414b2/custom_components/edge_tts/tts.py#L11-L87)
