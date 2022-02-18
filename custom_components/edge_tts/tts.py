@@ -3,7 +3,7 @@ import logging
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.tts import CONF_LANG, PLATFORM_SCHEMA, Provider
-from edgeTTS import Communicate
+from edge_tts import Communicate
 
 _LOGGER = logging.getLogger(__name__)
 
