@@ -37,7 +37,7 @@ tts:
 #### Supported languages
 
 - [speaking languages](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-languages)
-- [list of voices](https://github.com/hasscc/hass-edge-tts/blob/847504e615bde53543542d447491a747ca1414b2/custom_components/edge_tts/tts.py#L11-L87)
+- [list of voices](https://github.com/hasscc/hass-edge-tts/blob/fb49c92435eb79a9e51435a0063c8470fd8da0cd/custom_components/edge_tts/tts.py#L15-L95)
 
 
 ## Using
@@ -49,8 +49,9 @@ tts:
 
 - [`voice`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#use-multiple-voices)
 - [`style`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-styles)
-- `styledegree`: 0.01 - 2, only for `zh-CN`
-- `role`: only for `zh-CN-XiaomoNeural` / `zh-CN-XiaoxuanNeural`
+  - [Voice styles and roles](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/language-support?tabs=speechtotext#voice-styles-and-roles)
+- [`styledegree`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#style-degree): 0.01 - 2, only for `zh-CN`
+- [`role`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#role): only for `zh-CN-XiaomoNeural` / `zh-CN-XiaoxuanNeural` / `zh-CN-YunxiNeural` / `zh-CN-YunyeNeural`
   - Girl
   - Boy
   - YoungAdultFemale
