@@ -109,7 +109,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 
 async def async_get_engine(hass, config, discovery_info=None):
-    """"Set up the component."""
+    """Set up the component."""
     return SpeechProvider(hass, config)
 
 
@@ -121,7 +121,7 @@ class SpeechProvider(Provider):
         self.name = 'Edge TTS'
         self.hass = hass
         self._config = config or {}
-        self._style_options = ['style', 'styledegree', 'role']
+        self._style_options = []  # 'style', 'styledegree', 'role'  # issues/8
         self._prosody_options = ['pitch', 'contour', 'range', 'rate', 'duration', 'volume']
 
     @property

@@ -29,11 +29,8 @@ tts:
 ```yaml
 tts:
   - platform: edge_tts
-    service_name: xiaomo_say
+    service_name: xiaomo_say # service: tts.xiaomo_say
     language: zh-CN-XiaomoNeural
-    style: cheerful
-    styledegree: 2
-    role: Girl
     volume: 100.0
 ```
 
@@ -51,19 +48,9 @@ tts:
 ### Options
 
 - [`voice`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#use-multiple-voices)
-- [`style`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-styles)
-  - [Voice styles and roles](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/language-support?tabs=speechtotext#voice-styles-and-roles)
-- [`styledegree`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#style-degree): 0.01 - 2, only for `zh-CN`
-- [`role`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#role): only for `zh-CN-XiaomoNeural` / `zh-CN-XiaoxuanNeural` / `zh-CN-YunxiNeural` / `zh-CN-YunyeNeural`
-  - Girl
-  - Boy
-  - YoungAdultFemale
-  - YoungAdultMale
-  - OlderAdultFemale
-  - OlderAdultMale
-  - SeniorFemale
-  - SeniorMale
 - [`pitch` / `rate` / `volume` / `contour`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-prosody)
+
+> `style` / `styledegree` / `role` are no longer supported ([#8](https://github.com/hasscc/hass-edge-tts/issues/8)).
 
 ### Basic example
 
@@ -87,9 +74,6 @@ data:
   cache: true
   options:
     voice: zh-CN-XiaomoNeural
-    style: cheerful
-    styledegree: 2
-    role: Girl
     pitch: +0Hz
     rate: +0%
     volume: +10%
@@ -102,7 +86,7 @@ data:
 ```shell
 curl -X POST -H "Authorization: Bearer <ACCESS TOKEN>" \
      -H "Content-Type: application/json" \
-     -d '{"platform": "edge_tts", "message": "欢迎回家", "language": "zh-CN-XiaoxuanNeural", "cache": false, "options": {"style": "cheerful", "role": "Boy"}}' \
+     -d '{"platform": "edge_tts", "message": "欢迎回家", "language": "zh-CN-XiaoxuanNeural", "cache": true, "options": {"volume": "+10%"}}' \
      http://home-assistant.local:8123/api/tts_get_url
 ```
 
