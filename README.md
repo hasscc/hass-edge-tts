@@ -48,9 +48,9 @@ tts:
 ### Options
 
 - [`voice`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#use-multiple-voices)
-- [`pitch` / `rate` / `volume` / `contour`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-prosody)
+- [`pitch` / `rate` / `volume`](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-prosody)
 
-> `style` / `styledegree` / `role` are no longer supported ([#8](https://github.com/hasscc/hass-edge-tts/issues/8)).
+> `style` / `styledegree` / `role` / `contour` are no longer supported ([#8](https://github.com/hasscc/hass-edge-tts/issues/8)).
 
 ### Basic example
 
@@ -77,7 +77,6 @@ data:
     pitch: +0Hz
     rate: +0%
     volume: +10%
-    contour: (60%,-60%) (100%,+80%)
     
 ```
 

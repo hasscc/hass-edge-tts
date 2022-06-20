@@ -121,7 +121,7 @@ class SpeechProvider(Provider):
         self.name = 'Edge TTS'
         self.hass = hass
         self._config = config or {}
-        self._style_options = []  # 'style', 'styledegree', 'role'  # issues/8
+        self._style_options = ['style', 'styledegree', 'role']  # issues/8
         self._prosody_options = ['pitch', 'contour', 'range', 'rate', 'duration', 'volume']
 
     @property
@@ -157,37 +157,25 @@ class SpeechProvider(Provider):
         voice = opt.get('voice') or SUPPORTED_LANGUAGES.get(lang) or 'zh-CN-XiaoxiaoNeural'
 
         # https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-styles
-        express = []
         for f in self._style_options:
             v = opt.get(f)
             if v is not None:
-                express.append(f'{f}="{v}"')
-        if express:
-            express = ' '.join(express)
-            message = f'<mstts:express-as {express}>{message}</mstts:express-as>'
+                _LOGGER.warning(
+                    'Edge TTS options style/styledegree/role are no longer supported, '
+                    'please remove them from your automation or script. '
+                    'See: https://github.com/hasscc/hass-edge-tts/issues/8'
+                )
+                break
 
-        # https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-prosody
-        prosodies = []
-        for f in self._prosody_options:
-            v = opt.get(f)
-            if v is not None:
-                prosodies.append(f'{f}="{v}"')
-        if prosodies:
-            prosodies = ' '.join(prosodies)
-            message = f'<prosody {prosodies}>{message}</prosody>'
-
-        xml = '<speak version="1.0"' \
-              ' xmlns="http://www.w3.org/2001/10/synthesis"' \
-              ' xmlns:mstts="https://www.w3.org/2001/mstts"' \
-              f' xml:lang="{lang}">' \
-              f'<voice name="{voice}">' \
-              f'{message}</voice></speak>'
-        _LOGGER.debug('%s: %s', self.name, xml)
+        _LOGGER.debug('%s: %s', self.name, [message, opt])
         mp3 = b''
         tts = EdgeCommunicate()
         async for i in tts.run(
-            xml,
-            customspeak=True,
+            message,
+            voice=voice,
+            pitch=opt.get('pitch', ''),
+            rate=opt.get('rate', ''),
+            volume=opt.get('volume', ''),
         ):
             # [offset, text, binary]
             if i[2] is not None:
@@ -195,7 +183,7 @@ class SpeechProvider(Provider):
             elif i[0] is not None:
                 _LOGGER.debug('%s: audio.metadata: %s', self.name, i)
         if not mp3:
-            _LOGGER.warning('%s: failed: %s', self.name, xml)
+            _LOGGER.warning('%s: failed: %s', self.name, [message, opt])
             return None, None
         return 'mp3', mp3
 
