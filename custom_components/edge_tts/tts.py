@@ -122,7 +122,7 @@ class SpeechProvider(Provider):
         self.hass = hass
         self._config = config or {}
         self._style_options = ['style', 'styledegree', 'role']  # issues/8
-        self._prosody_options = ['pitch', 'contour', 'range', 'rate', 'duration', 'volume']
+        self._prosody_options = ['pitch', 'rate', 'volume']
 
     @property
     def default_language(self):
