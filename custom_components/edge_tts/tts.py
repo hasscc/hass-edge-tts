@@ -173,9 +173,9 @@ class SpeechProvider(Provider):
         async for i in tts.run(
             message,
             voice=voice,
-            pitch=opt.get('pitch', ''),
-            rate=opt.get('rate', ''),
-            volume=opt.get('volume', ''),
+            pitch=opt.get('pitch', '+0Hz'),
+            rate=opt.get('rate', '+0%'),
+            volume=opt.get('volume', '+0%'),
         ):
             # [offset, text, binary]
             if i[2] is not None:
