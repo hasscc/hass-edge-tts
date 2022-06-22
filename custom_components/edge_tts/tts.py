@@ -43,6 +43,7 @@ SUPPORTED_VOICES = {
     'en-IE-EmilyNeural': 'en-IE',
     'en-IN-NeerjaNeural': 'en-IN',
     'en-PH-RosaNeural': 'en-PH',
+    'en-US-AnaNeural': 'en-US',
     'en-US-AriaNeural': 'en-US',
     'en-US-GuyNeural': 'en-US',
     'en-US-JennyNeural': 'en-US',
