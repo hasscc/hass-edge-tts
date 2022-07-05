@@ -79,7 +79,6 @@ SUPPORTED_VOICES = {
     'pt-BR-FranciscaNeural': 'pt-BR',
     'pt-PT-RaquelNeural': 'pt-PT',
     'ro-RO-AlinaNeural': 'ro-RO',
-    'ro-RO-EmilNeural': 'ro-RO',
     'ru-RU-SvetlanaNeural': 'ru-RU',
     'sk-SK-ViktoriaNeural': 'sk-SK',
     'sl-SI-PetraNeural': 'sl-SI',
