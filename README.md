@@ -30,14 +30,14 @@ tts:
 tts:
   - platform: edge_tts
     service_name: xiaomo_say # service: tts.xiaomo_say
-    language: zh-CN-XiaomoNeural
+    language: zh-CN-XiaoxiaoNeural
     volume: 100.0
 ```
 
 #### Supported languages
 
 - [speaking languages](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-languages)
-- [list of voices](https://github.com/hasscc/hass-edge-tts/blob/fb49c92435eb79a9e51435a0063c8470fd8da0cd/custom_components/edge_tts/tts.py#L15-L95)
+- [list of voices](https://github.com/hasscc/hass-edge-tts/blob/29587ecf05ecd9d40269e13d7bd37f7f7f70c874/custom_components/edge_tts/tts.py#L14-L314)
 
 
 ## Using
@@ -59,7 +59,7 @@ service: tts.edge_tts_say
 data:
   entity_id: media_player.your_player_entity_id
   message: Hello
-  language: zh-CN-XiaoxiaoNeural # Language or voice (Optional)
+  language: zh-CN-XiaoyiNeural # Language or voice (Optional)
 
 ```
 
@@ -73,7 +73,7 @@ data:
   language: zh-CN
   cache: true
   options:
-    voice: zh-CN-XiaomoNeural
+    voice: zh-CN-XiaoyiNeural
     pitch: +0Hz
     rate: +0%
     volume: +10%
@@ -85,7 +85,7 @@ data:
 ```shell
 curl -X POST -H "Authorization: Bearer <ACCESS TOKEN>" \
      -H "Content-Type: application/json" \
-     -d '{"platform": "edge_tts", "message": "欢迎回家", "language": "zh-CN-XiaoxuanNeural", "cache": true, "options": {"volume": "+10%"}}' \
+     -d '{"platform": "edge_tts", "message": "欢迎回家", "language": "zh-CN-XiaoyiNeural", "cache": true, "options": {"volume": "+10%"}}' \
      http://home-assistant.local:8123/api/tts_get_url
 ```
 
