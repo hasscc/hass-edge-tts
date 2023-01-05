@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "documentation": "https://github.com/hasscc/hass-edge-tts",
   "issue_tracker": "https://github.com/hasscc/hass-edge-tts/issues",
-  "requirements": ["edge-tts==6.0.7"],
+  "requirements": ["edge-tts==6.0.8"],
   "codeowners": [],
   "iot_class": "cloud_polling"
 }
