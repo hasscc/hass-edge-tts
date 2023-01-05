@@ -31,7 +31,7 @@ tts:
   - platform: edge_tts
     service_name: xiaomo_say # service: tts.xiaomo_say
     language: zh-CN-XiaoxiaoNeural
-    volume: 100.0
+    volume: +10%
 ```
 
 #### Supported languages
