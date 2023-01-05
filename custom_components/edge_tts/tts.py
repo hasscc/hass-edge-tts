@@ -1,14 +1,22 @@
 """The speech service."""
 import logging
 
-import edge_tts
-import edge_tts.exceptions
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.components.tts import CONF_LANG, PLATFORM_SCHEMA, Provider
 
-if edge_tts.__version__ != '6.0.5':
-    raise Exception('edge_tts version 6.0.5 is required. Please update edge_tts.')
+EDGE_TTS_VERSION = '6.0.7'
+try:
+    import edge_tts
+    if '__version__' not in dir(edge_tts) or edge_tts.__version__ != EDGE_TTS_VERSION:
+        raise Exception(f"edge_tts version is not {EDGE_TTS_VERSION}. Please install edge_tts {EDGE_TTS_VERSION}.")
+    import edge_tts.exceptions
+except ImportError:
+    try:
+        import edgeTTS
+        raise Exception(f'Please uninstall edgeTTS and install edge_tts {EDGE_TTS_VERSION} instead.')
+    except ImportError:
+        raise Exception(f'edge_tts is required. Please install edge_tts {EDGE_TTS_VERSION}.')
 
 _LOGGER = logging.getLogger(__name__)
 
