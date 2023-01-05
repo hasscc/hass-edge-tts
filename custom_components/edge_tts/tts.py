@@ -1,13 +1,14 @@
 """The speech service."""
 import logging
-import voluptuous as vol
+
+import edge_tts
+import edge_tts.exceptions
 import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
 from homeassistant.components.tts import CONF_LANG, PLATFORM_SCHEMA, Provider
 
-try:
-    from edge_tts import Communicate
-except (ImportError, ModuleNotFoundError):
-    from edgeTTS import Communicate
+if edge_tts.__version__ != '6.0.5':
+    raise Exception('edge_tts version 6.0.5 is required. Please update edge_tts.')
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -341,7 +342,7 @@ class SpeechProvider(Provider):
         self.hass = hass
         self._config = config or {}
         self._style_options = ['style', 'styledegree', 'role']  # issues/8
-        self._prosody_options = ['pitch', 'rate', 'volume']
+        self._prosody_options = ['pitch', 'rate', 'volume']     # issues/24
 
     @property
     def default_language(self):
@@ -386,22 +387,28 @@ class SpeechProvider(Provider):
                 )
                 break
 
+        if opt.get('pitch') is not None:
+            _LOGGER.warning(
+                'Edge TTS option pitch is no longer supported, '
+                'please remove it from your automation or script. '
+                'See: https://github.com/hasscc/hass-edge-tts/issues/24'
+            )
+
         _LOGGER.debug('%s: %s', self.name, [message, opt])
         mp3 = b''
-        tts = EdgeCommunicate()
-        async for i in tts.run(
+        tts = EdgeCommunicate(
             message,
             voice=voice,
-            pitch=opt.get('pitch', '+0Hz'),
             rate=opt.get('rate', '+0%'),
             volume=opt.get('volume', '+0%'),
-        ):
-            # [offset, text, binary]
-            if i[2] is not None:
-                mp3 += i[2]
-            elif i[0] is not None:
-                _LOGGER.debug('%s: audio.metadata: %s', self.name, i)
-        if not mp3:
+        )
+        try:
+            async for chunk in tts.stream():
+                if chunk["type"] == "audio":
+                    mp3 += chunk["data"]
+                else:
+                    _LOGGER.debug('%s: audio.metadata: %s', self.name, chunk)
+        except edge_tts.exceptions.NoAudioReceived:
             _LOGGER.warning('%s: failed: %s', self.name, [message, opt])
             return None, None
         return 'mp3', mp3
@@ -411,5 +418,5 @@ class SpeechProvider(Provider):
         return None, None
 
 
-class EdgeCommunicate(Communicate):
+class EdgeCommunicate(edge_tts.Communicate):
     """ Edge TTS """
