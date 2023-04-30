@@ -5,7 +5,7 @@ import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.components.tts import CONF_LANG, PLATFORM_SCHEMA, Provider
 
-EDGE_TTS_VERSION = '6.1.3'
+EDGE_TTS_VERSION = '6.1.5'
 try:
     import edge_tts
     if '__version__' not in dir(edge_tts) or edge_tts.__version__ != EDGE_TTS_VERSION:
