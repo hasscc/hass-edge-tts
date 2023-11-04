@@ -5,7 +5,7 @@ import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.components.tts import CONF_LANG, PLATFORM_SCHEMA, Provider
 
-EDGE_TTS_VERSION = '6.1.8'
+EDGE_TTS_VERSION = '6.1.9'
 try:
     import edge_tts
     if '__version__' not in dir(edge_tts) or edge_tts.__version__ != EDGE_TTS_VERSION:
@@ -395,18 +395,12 @@ class SpeechProvider(Provider):
                 )
                 break
 
-        if opt.get('pitch') is not None:
-            _LOGGER.warning(
-                'Edge TTS option pitch is no longer supported, '
-                'please remove it from your automation or script. '
-                'See: https://github.com/hasscc/hass-edge-tts/issues/24'
-            )
-
         _LOGGER.debug('%s: %s', self.name, [message, opt])
         mp3 = b''
         tts = EdgeCommunicate(
             message,
             voice=voice,
+            pitch=opt.get('pitch', '+0Hz'),
             rate=opt.get('rate', '+0%'),
             volume=opt.get('volume', '+0%'),
         )
