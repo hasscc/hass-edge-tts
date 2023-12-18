@@ -9,10 +9,7 @@ This component is based on the TTS service of Microsoft Edge browser, no need to
 
 ```shell
 # Auto install via terminal shell
-wget -O - https://raw.githubusercontent.com/hasscc/get/main/get | DOMAIN=edge_tts REPO_PATH=hasscc/hass-edge-tts ARCHIVE_TAG=main bash -
-
-# Or
-wget -O - https://ghproxy.com/raw.githubusercontent.com/hasscc/get/main/get | HUB_DOMAIN=ghproxy.com/github.com DOMAIN=edge_tts REPO_PATH=hasscc/hass-edge-tts ARCHIVE_TAG=main bash -
+wget -O - https://hacs.vip/get | DOMAIN=edge_tts REPO_PATH=hasscc/hass-edge-tts ARCHIVE_TAG=main bash -
 ```
 
 
