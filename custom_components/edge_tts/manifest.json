@@ -5,6 +5,6 @@
   "documentation": "https://github.com/hasscc/hass-edge-tts",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/hasscc/hass-edge-tts/issues",
-  "requirements": ["edge-tts==6.1.15"],
+  "requirements": ["edge-tts==6.1.16"],
   "version": "0.0.1"
 }
