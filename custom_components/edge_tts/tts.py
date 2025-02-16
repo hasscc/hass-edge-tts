@@ -95,6 +95,7 @@ SUPPORTED_VOICES = {
     'de-DE-AmalaNeural': 'de-DE',
     'de-DE-ConradNeural': 'de-DE',
     'de-DE-KatjaNeural': 'de-DE',
+    'de-DE-SeraphinaMultilingualNeural': 'de-DE',
     'de-DE-KillianNeural': 'de-DE',
     'el-GR-AthinaNeural': 'el-GR',
     'el-GR-NestorasNeural': 'el-GR',
