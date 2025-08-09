@@ -52,20 +52,23 @@ tts:
 ### Basic example
 
 ```yaml
-service: tts.edge_tts_say
+action: tts.speak
+target:
+  entity_id: tts.edge_tts
 data:
-  entity_id: media_player.your_player_entity_id
+  media_player_entity_id: media_player.your_player_entity_id
   message: Hello
   language: zh-CN-XiaoyiNeural # Language or voice (Optional)
-
 ```
 
 ### Full example
 
 ```yaml
-service: tts.edge_tts_say
+action: tts.speak
+target:
+  entity_id: tts.edge_tts
 data:
-  entity_id: media_player.your_player_entity_id
+  media_player_entity_id: media_player.your_player_entity_id
   message: 吃葡萄不吐葡萄皮，不吃葡萄倒吐葡萄皮
   language: zh-CN
   cache: true
@@ -73,7 +76,6 @@ data:
     voice: zh-CN-XiaoyiNeural
     rate: +0%
     volume: +10%
-    
 ```
 
 ### Curl example
@@ -84,7 +86,6 @@ curl -X POST -H "Authorization: Bearer <ACCESS TOKEN>" \
      -d '{"platform": "edge_tts", "message": "欢迎回家", "language": "zh-CN-XiaoyiNeural", "cache": true, "options": {"volume": "+10%"}}' \
      http://home-assistant.local:8123/api/tts_get_url
 ```
-
 
 ## Thanks
 
