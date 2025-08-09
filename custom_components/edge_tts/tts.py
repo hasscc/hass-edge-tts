@@ -1,9 +1,21 @@
 """The speech service."""
 import logging
+from typing import Any
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from homeassistant.components.tts import CONF_LANG, PLATFORM_SCHEMA, Provider
+from homeassistant.components.tts import (
+    CONF_LANG,
+    PLATFORM_SCHEMA,
+    Provider,
+    TextToSpeechEntity,
+    TtsAudioType,
+)
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+
+from . import DOMAIN
 
 EDGE_TTS_VERSION = '7.0.2'
 try:
@@ -338,7 +350,36 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 
 async def async_get_engine(hass, config, discovery_info=None):
-    """Set up the component."""
+    """Set up both the legacy provider and new entity for Edge TTS."""
+    # Try to create the entity for tts.speak support
+    # This is a workaround since async_setup_platform might not be called automatically
+    from homeassistant.helpers import entity_platform
+    from homeassistant.helpers.entity_component import EntityComponent
+    
+    try:
+        # Check if we already created the entity
+        if DOMAIN not in hass.data:
+            hass.data[DOMAIN] = {}
+        
+        if not hass.data[DOMAIN].get("entity_created", False):
+            # Create the TTS entity
+            entity = EdgeTTSEntity(hass, config)
+            
+            # Try to get the TTS component
+            component = hass.data.get("component_tts")
+            if component is None:
+                # Create a minimal component if it doesn't exist
+                component = EntityComponent(_LOGGER, "tts", hass)
+                hass.data["component_tts"] = component
+            
+            # Add the entity
+            await component.async_add_entities([entity])
+            hass.data[DOMAIN]["entity_created"] = True
+            _LOGGER.info("Edge TTS entity created successfully")
+    except Exception as e:
+        _LOGGER.warning("Could not create Edge TTS entity: %s", e)
+    
+    # Always return the provider for backward compatibility
     return SpeechProvider(hass, config)
 
 
@@ -423,3 +464,92 @@ class SpeechProvider(Provider):
 
 class EdgeCommunicate(edge_tts.Communicate):
     """ Edge TTS """
+
+
+class EdgeTTSEntity(TextToSpeechEntity):
+    """The Edge TTS entity."""
+
+    _attr_name = "Edge TTS"
+    _attr_unique_id = "edge_tts_entity"
+
+    def __init__(self, hass: HomeAssistant, config: dict) -> None:
+        """Initialize Edge TTS entity."""
+        self.hass = hass
+        self._config = config
+        self._style_options = ['style', 'styledegree', 'role']  # issues/8
+        self._prosody_options = ['pitch', 'rate', 'volume']     # issues/24
+        
+        # Set entity ID
+        self.entity_id = f"tts.{DOMAIN}"
+        
+        # Set default language
+        self._attr_default_language = config.get(CONF_LANG, DEFAULT_LANG)
+        
+        # Set supported languages
+        self._attr_supported_languages = list([*SUPPORTED_LANGUAGES.keys(), *SUPPORTED_VOICES.keys()])
+        
+        # Set supported options
+        self._attr_supported_options = ['voice'] + self._prosody_options
+
+    async def async_get_tts_audio(
+        self, message: str, language: str, options: dict[str, Any] | None = None
+    ) -> TtsAudioType:
+        """Load TTS audio."""
+        opt = {CONF_LANG: language}
+        if language in SUPPORTED_VOICES:
+            opt[CONF_LANG] = SUPPORTED_VOICES[language]
+            opt['voice'] = language
+        opt = {**self._config, **opt, **(options or {})}
+
+        # https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-languages
+        lang = opt.get(CONF_LANG) or language
+
+        # https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#use-multiple-voices
+        voice = opt.get('voice') or SUPPORTED_LANGUAGES.get(lang) or 'zh-CN-XiaoxiaoNeural'
+
+        # https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-styles
+        for f in self._style_options:
+            v = opt.get(f)
+            if v is not None:
+                _LOGGER.warning(
+                    'Edge TTS options style/styledegree/role are no longer supported, '
+                    'please remove them from your automation or script. '
+                    'See: https://github.com/hasscc/hass-edge-tts/issues/8'
+                )
+                break
+
+        _LOGGER.debug('Edge TTS: %s', [message, opt])
+        mp3 = b''
+        tts = EdgeCommunicate(
+            message,
+            voice=voice,
+            pitch=opt.get('pitch', '+0Hz'),
+            rate=opt.get('rate', '+0%'),
+            volume=opt.get('volume', '+0%'),
+        )
+        try:
+            async for chunk in tts.stream():
+                if chunk["type"] == "audio":
+                    mp3 += chunk["data"]
+                else:
+                    _LOGGER.debug('Edge TTS: audio.metadata: %s', chunk)
+        except edge_tts.exceptions.NoAudioReceived:
+            _LOGGER.warning('Edge TTS: failed: %s', [message, opt])
+            return None, None
+        return 'mp3', mp3
+
+
+async def async_setup_platform(
+    hass: HomeAssistant,
+    config: ConfigType,
+    async_add_entities: AddEntitiesCallback,
+    discovery_info: dict | None = None,
+) -> None:
+    """Set up Edge TTS entity from YAML configuration.
+    
+    This creates the new TTS entity that supports tts.speak action.
+    The legacy provider (for tts.edge_tts_say) is set up via async_get_engine.
+    """
+    # Create the TTS entity for tts.speak support
+    entity = EdgeTTSEntity(hass, config)
+    async_add_entities([entity], True)
