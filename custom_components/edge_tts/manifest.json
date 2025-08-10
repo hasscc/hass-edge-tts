@@ -2,11 +2,11 @@
   "domain": "edge_tts",
   "name": "Microsoft Edge TTS",
   "codeowners": ["@al-one", "@rany2"],
-  "config_flow": false,
+  "config_flow": true,
   "documentation": "https://github.com/hasscc/hass-edge-tts",
   "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/hasscc/hass-edge-tts/issues",
-  "requirements": ["edge-tts==7.0.2"],
-  "version": "0.0.1"
+  "requirements": ["edge-tts==7.2.0"],
+  "version": "7.2.0"
 }
