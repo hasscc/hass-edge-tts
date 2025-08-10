@@ -15,21 +15,8 @@ wget -O - https://hacs.vip/get | DOMAIN=edge_tts REPO_PATH=hasscc/hass-edge-tts 
 
 ## Config
 
-```yaml
-# configuration.yaml
-tts:
-  - platform: edge_tts
-    language: zh-CN # Default language or voice (Optional)
-```
+[UI: config - integrations - add integration - Microsoft Edge TTS ](https://github.com/user-attachments/assets/24eacc80-fe2c-4b1f-8434-3cea472c503b)
 
-#### Configure default options:
-```yaml
-tts:
-  - platform: edge_tts
-    service_name: xiaomo_say # service: tts.xiaomo_say
-    language: zh-CN-XiaoxiaoNeural
-    volume: +10%
-```
 
 #### Supported languages
 
@@ -39,8 +26,9 @@ tts:
 
 ## Using
 
-- [![Call service: tts.edge_tts_say](https://my.home-assistant.io/badges/developer_call_service.svg)](https://my.home-assistant.io/redirect/developer_call_service/?service=tts.edge_tts_say)
+- [![Call service: tts.speak](https://my.home-assistant.io/badges/developer_call_service.svg)](https://my.home-assistant.io/redirect/developer_call_service/?service=tts.speak)
 - [REST API: /api/tts_get_url](https://www.home-assistant.io/integrations/tts#post-apitts_get_url)
+
 
 ### Options
 
