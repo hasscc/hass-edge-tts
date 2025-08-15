@@ -5,6 +5,8 @@ This component is based on the TTS service of Microsoft Edge browser, no need to
 
 ## Install
 
+[![Install repository](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=hasscc&repository=hass-edge-tts&category=integration)
+
 > Download and copy `custom_components/edge_tts` folder to `custom_components` folder in your HomeAssistant config folder
 
 ```shell
@@ -16,6 +18,8 @@ wget -O - https://hacs.vip/get | DOMAIN=edge_tts REPO_PATH=hasscc/hass-edge-tts 
 ## Config
 
 [UI: config - integrations - add integration - Microsoft Edge TTS ]
+
+[![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=edge_tts)
 
 add integration \
 <img width="500" height="300" alt="add integration" src="https://github.com/user-attachments/assets/3a4f3a30-bcd1-447e-8044-36c2bc3f78b0" /> 
