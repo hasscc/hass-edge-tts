@@ -17,15 +17,17 @@ wget -O - https://hacs.vip/get | DOMAIN=edge_tts REPO_PATH=hasscc/hass-edge-tts 
 
 [UI: config - integrations - add integration - Microsoft Edge TTS ]
 
-<img width="500" height="300" alt="add integration" src="https://github.com/user-attachments/assets/24eacc80-fe2c-4b1f-8434-3cea472c503b" />
+add integration \
+<img width="500" height="300" alt="add integration" src="https://github.com/user-attachments/assets/3a4f3a30-bcd1-447e-8044-36c2bc3f78b0" /> 
 
-<img width="500" height="300" alt="config option" src="https://github.com/user-attachments/assets/97e02a2f-6005-460d-ab61-4f31bcca97f5" />
+config option \
+<img width="500" height="300" alt="config option" src="https://github.com/user-attachments/assets/0cadaf9e-d316-49b9-b28d-f1a8f7e7551c" /> \
 
+entity \
+<img width="500" height="300" alt="entity" src="https://github.com/user-attachments/assets/42e8a6d7-c5e7-4f8f-9093-d93ca678ce87" /> \
 
-<img width="500" height="300" alt="entity" src="https://github.com/user-attachments/assets/ef8bfcf0-54b1-4225-902f-46cb61aca43f" />
-
-
-<img width="500" height="300" alt="call service" src="https://github.com/user-attachments/assets/6fc089d1-aa3a-4bc9-86cf-82adeb2b3ed3" />
+call service \
+<img width="500" height="300" alt="call service" src="https://github.com/user-attachments/assets/fa353f2d-623b-460b-8fa4-0cbbc233f073" /> 
 
 
 #### Supported languages
@@ -81,7 +83,7 @@ data:
 ```shell
 curl -X POST -H "Authorization: Bearer <ACCESS TOKEN>" \
      -H "Content-Type: application/json" \
-     -d '{"platform": "edge_tts", "message": "欢迎回家", "language": "zh-CN-XiaoyiNeural", "cache": true, "options": {"volume": "+10%"}}' \
+     -d '{"platform": "tts.edge_tts", "message": "欢迎回家", "language": "zh-CN-XiaoyiNeural", "cache": true, "options": {"volume": "+10%"}}' \
      http://home-assistant.local:8123/api/tts_get_url
 ```
 
