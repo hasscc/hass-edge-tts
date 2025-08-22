@@ -1,8 +1,6 @@
 """The speech service."""
 import logging
 import time
-import aiofiles
-import asyncio
 from typing import Any
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components.tts import (
@@ -14,8 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
-from .const import DOMAIN, CONF_VOICE, EDGE_TTS_VERSION, SUPPORTED_VOICES, DEFAULT_LANG
+from .const import DOMAIN, EDGE_TTS_VERSION, SUPPORTED_VOICES, DEFAULT_LANG
 
 try:
     import edge_tts

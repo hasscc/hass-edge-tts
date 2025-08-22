@@ -1,5 +1,4 @@
 DOMAIN = "edge_tts"
-CONF_VOICE = "voice"
 EDGE_TTS_VERSION = '7.2.0'
 
 DEFAULT_LANG = 'zh-CN'

@@ -2,7 +2,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.components.tts import CONF_LANG
-from .const import DOMAIN, CONF_VOICE, SUPPORTED_VOICES
+from .const import DOMAIN, SUPPORTED_VOICES
 from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig, SelectSelectorMode
 
 SUPPORTED_LANGUAGES_LIST = {
