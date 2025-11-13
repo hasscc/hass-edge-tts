@@ -3,6 +3,7 @@
   "name": "Microsoft Edge TTS",
   "codeowners": ["@al-one", "@rany2", "@dscao"],
   "config_flow": true,
+  "dependencies": ["intent"],
   "documentation": "https://github.com/hasscc/hass-edge-tts",
   "integration_type": "service",
   "iot_class": "cloud_polling",
