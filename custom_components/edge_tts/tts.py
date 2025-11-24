@@ -10,6 +10,7 @@ from homeassistant.components.tts import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.util import ulid
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, EDGE_TTS_VERSION, SUPPORTED_VOICES, DEFAULT_LANG
@@ -62,10 +63,20 @@ class EdgeTTSEntity(TextToSpeechEntity):
             "sw_version": EDGE_TTS_VERSION,
             "entry_type": DeviceEntryType.SERVICE,
         }
+        self._attr_extra_state_attributes = {}
 
         # Prosody and style options
         self._prosody_options = ['pitch', 'rate', 'volume']
         self._style_options = ['style', 'styledegree', 'role']
+
+    async def async_added_to_hass(self) -> None:
+        domain_data = self.hass.data.setdefault(DOMAIN, {})
+        domain_data["tts_entity_id"] = self.entity_id
+        access_tokens = domain_data.setdefault("access_tokens", {
+            "temp": ulid.ulid_hex(),
+            "long": self.hass.data["core.uuid"],
+        })
+        self._attr_extra_state_attributes["access_tokens"] = access_tokens.copy()
 
     @property
     def default_language(self) -> str:

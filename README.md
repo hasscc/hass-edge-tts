@@ -83,14 +83,20 @@ data:
     preferred_format: mp3  # value is a file extension like wav, mp3, ogg, etc
 ```
 
-### Curl example
+### More examples
 
 ```shell
 curl -X POST -H "Authorization: Bearer <ACCESS TOKEN>" \
      -H "Content-Type: application/json" \
      -d '{"engine_id": "tts.edge_tts", "message": "欢迎回家", "language": "zh-CN-XiaoyiNeural", "cache": true, "options": {"volume": "+10%"}}' \
-     http://home-assistant.local:8123/api/tts_get_url
+     http://homeassistant.local:8123/api/tts_get_url
 ```
+
+```shell
+curl -o hello.mp3 'http://homeassistant.local:8123/api/tts_proxy/edge?rate=+20%&message=hello&token=<tts_token>'
+```
+> The `tts_token` can be found in the tts entity attributes.
+
 
 ## Thanks
 
