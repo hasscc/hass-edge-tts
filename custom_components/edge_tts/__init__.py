@@ -57,12 +57,12 @@ class EdgeTtsProxyView(HomeAssistantView):
                 hass, domain_data.get("tts_entity_id", "tts.edge_tts"),
                 language=request.query.get("language"),
                 options={
-                    "rate": request.query.get("rate", "+0%").replace(" ", "+"),
+                    "rate": request.query.get("rate", "+10%").replace(" ", "+"),
                     "volume": request.query.get("volume", "+10%").replace(" ", "+"),
                 },
             )
         except Exception as err:
-            return self.json({"error": err}, 400)
+            return self.json({"error": str(err)}, 400)
 
         stream.async_set_message(message)
         response: web.StreamResponse | None = None
@@ -74,7 +74,8 @@ class EdgeTtsProxyView(HomeAssistantView):
                     await response.prepare(request)
                 await response.write(data)
         except Exception as err:
-            _LOGGER.error("Error streaming tts: %s", err)
+            _LOGGER.error("Error streaming tts", exc_info=True)
+            return self.json({"error": str(err)}, 400)
         if response is None:
             return web.Response(status=500)
         await response.write_eof()

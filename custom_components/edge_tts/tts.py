@@ -13,19 +13,10 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.util import ulid
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from .const import DOMAIN, EDGE_TTS_VERSION, SUPPORTED_VOICES, DEFAULT_LANG
 
-try:
-    import edge_tts
-    if '__version__' not in dir(edge_tts) or edge_tts.__version__ != EDGE_TTS_VERSION:
-        raise Exception(f"edge_tts version is not {EDGE_TTS_VERSION}. Please install edge_tts {EDGE_TTS_VERSION}.")
-    import edge_tts.exceptions
-except ImportError:
-    try:
-        import edgeTTS
-        raise Exception(f'Please uninstall edgeTTS and install edge_tts {EDGE_TTS_VERSION} instead.')
-    except ImportError:
-        raise Exception(f'edge_tts is required. Please install edge_tts {EDGE_TTS_VERSION}.')
+import edge_tts
+from .const import DOMAIN, SUPPORTED_VOICES, DEFAULT_LANG
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,7 +51,7 @@ class EdgeTTSEntity(TextToSpeechEntity):
             "name": "Edge TTS Service",
             "manufacturer": "Edge TTS Community",
             "model": "Cloud TTS",
-            "sw_version": EDGE_TTS_VERSION,
+            "sw_version": edge_tts.__version__,
             "entry_type": DeviceEntryType.SERVICE,
         }
         self._attr_extra_state_attributes = {}
@@ -160,7 +151,6 @@ async def _process_tts_audio(
     elapsed_time = (end_time - start_time) * 1000
     _LOGGER.info('load tts elapsed_time: %sms', elapsed_time)
     return 'mp3', mp3
-
 
 
 class EdgeCommunicate(edge_tts.Communicate):

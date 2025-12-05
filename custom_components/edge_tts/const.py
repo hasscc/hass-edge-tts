@@ -1,7 +1,5 @@
 DOMAIN = "edge_tts"
-EDGE_TTS_VERSION = '7.2.0'
-
-DEFAULT_LANG = 'zh-CN'
+DEFAULT_LANG = "zh-CN"
 
 # https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/voices/list?trustedclienttoken=6A5AA1D4EAFF4E9FB37E23D68491D6F4
 SUPPORTED_VOICES = {

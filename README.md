@@ -37,7 +37,7 @@ call service \
 #### Supported languages
 
 - [speaking languages](https://docs.microsoft.com/zh-CN/azure/cognitive-services/speech-service/speech-synthesis-markup?tabs=csharp#adjust-speaking-languages)
-- [list of voices](https://github.com/hasscc/hass-edge-tts/blob/29587ecf05ecd9d40269e13d7bd37f7f7f70c874/custom_components/edge_tts/tts.py#L14-L314)
+- [list of voices](https://github.com/hasscc/hass-edge-tts/blob/main/custom_components/edge_tts/const.py)
 
 
 ## Using
@@ -80,7 +80,6 @@ data:
     voice: zh-CN-XiaoyiNeural
     rate: +0%
     volume: +10%
-    preferred_format: mp3  # value is a file extension like wav, mp3, ogg, etc
 ```
 
 ### More examples
