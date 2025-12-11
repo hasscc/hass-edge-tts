@@ -1,6 +1,7 @@
 """The Edge TTS integration."""
 import logging
 from aiohttp import web
+from base64 import urlsafe_b64decode
 from homeassistant.core import HomeAssistant
 from homeassistant.const import Platform
 from homeassistant.config_entries import ConfigEntry
@@ -51,6 +52,8 @@ class EdgeTtsProxyView(HomeAssistantView):
             raise web.HTTPUnauthorized
         if not (message := request.query.get("message")):
             return self.json({"error": "message empty"}, 400)
+        if message.startswith("base64:"):
+            message = urlsafe_b64decode(message[7:]).decode()
 
         try:
             stream = async_create_stream(
