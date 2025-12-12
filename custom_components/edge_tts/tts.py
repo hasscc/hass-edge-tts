@@ -95,7 +95,7 @@ class EdgeTTSEntity(TextToSpeechEntity):
             config,
             self._style_options,
             self.name,
-            options
+            options,
         )
 
 
@@ -145,8 +145,8 @@ async def _process_tts_audio(
             else:
                 _LOGGER.debug('%s: audio.metadata: %s', name, chunk)
     except edge_tts.exceptions.NoAudioReceived:
-        _LOGGER.warning('%s: failed: %s', name, [message, opt])
-        raise HomeAssistantError(f"{name} failed {message}")
+        _LOGGER.warning('%s: No audio received: %s', name, [message, opt])
+        raise HomeAssistantError(f"{name}: No audio received: {message}")
     end_time = time.perf_counter()
     elapsed_time = (end_time - start_time) * 1000
     _LOGGER.info('load tts elapsed_time: %sms', elapsed_time)
