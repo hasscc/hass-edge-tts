@@ -1,5 +1,6 @@
 DOMAIN = "edge_tts"
 DEFAULT_LANG = "zh-CN"
+DEFAULT_VOICE = "zh-CN-XiaoxiaoNeural"
 
 # https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/voices/list?trustedclienttoken=6A5AA1D4EAFF4E9FB37E23D68491D6F4
 SUPPORTED_VOICES = {
@@ -9,6 +10,8 @@ SUPPORTED_VOICES = {
     'zh-CN-YunxiNeural': 'zh-CN',
     'zh-CN-YunxiaNeural': 'zh-CN',
     'zh-CN-YunyangNeural': 'zh-CN',
+    'zh-CN-liaoning-XiaobeiNeural': 'zh-CN',
+    'zh-CN-shaanxi-XiaoniNeural': 'zh-CN',
     'zh-HK-HiuGaaiNeural': 'zh-HK',
     'zh-HK-HiuMaanNeural': 'zh-HK',
     'zh-HK-WanLungNeural': 'zh-HK',

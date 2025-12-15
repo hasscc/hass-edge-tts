@@ -55,11 +55,13 @@ class EdgeTtsProxyView(HomeAssistantView):
         if message.startswith("base64:"):
             message = urlsafe_b64decode(message[7:]).decode()
 
+        entity_id = request.query.get("entity_id") or domain_data.get("tts_entity_id")
         try:
             stream = async_create_stream(
-                hass, domain_data.get("tts_entity_id", "tts.edge_tts"),
+                hass, entity_id or "tts.edge_tts",
                 language=request.query.get("language"),
                 options={
+                    "voice": request.query.get("voice", ""),
                     "rate": request.query.get("rate", "+10%").replace(" ", "+"),
                     "volume": request.query.get("volume", "+10%").replace(" ", "+"),
                 },

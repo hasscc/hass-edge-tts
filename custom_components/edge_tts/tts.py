@@ -2,27 +2,31 @@
 import logging
 import time
 from typing import Any
+from collections.abc import AsyncGenerator
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components.tts import (
     CONF_LANG,
     TextToSpeechEntity,
     TtsAudioType,
+    TTSAudioRequest,
+    TTSAudioResponse,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.util import ulid
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from sentence_stream import async_stream_to_sentences
 
 import edge_tts
-from .const import DOMAIN, SUPPORTED_VOICES, DEFAULT_LANG
+from .const import DOMAIN, SUPPORTED_VOICES, DEFAULT_LANG, DEFAULT_VOICE
 
 
 _LOGGER = logging.getLogger(__name__)
 
 SUPPORTED_LANGUAGES = {
     **dict(zip(SUPPORTED_VOICES.values(), SUPPORTED_VOICES.keys())),
-    'zh-CN': 'zh-CN-XiaoxiaoNeural',
+    DEFAULT_LANG: DEFAULT_VOICE,
 }
 
 async def async_setup_entry(
@@ -85,73 +89,104 @@ class EdgeTTSEntity(TextToSpeechEntity):
         return ['voice'] + self._prosody_options
 
     async def async_get_tts_audio(
-        self, message: str, language: str, options: dict[str, Any] | None = None
+        self, message: str, language: str, options: dict[str, Any]
     ) -> TtsAudioType:
-        """Load TTS audio."""
-        config = self._config_entry.options
-        return await _process_tts_audio(
+        return 'mp3', await self.hass.async_add_executor_job(
+            self._process_tts_audio,
             message,
             language,
-            config,
-            self._style_options,
-            self.name,
             options,
         )
 
+    def _process_tts_audio(
+        self, message: str, language: str, options: dict[str, Any]
+    ) -> bytes | None:
+        opt = {CONF_LANG: language}
+        if language in SUPPORTED_VOICES:
+            opt[CONF_LANG] = SUPPORTED_VOICES[language]
+            opt['voice'] = language
+        opt = {**self._config_entry.options, **opt, **(options or {})}
 
-async def _process_tts_audio(
-    message: str,
-    language: str, 
-    config: dict,
-    style_options: list,
-    name: str,
-    options: dict[str, Any] | None = None,
-) -> TtsAudioType:
-    """Shared TTS processing logic for both SpeechProvider and EdgeTTSEntity."""
-    opt = {CONF_LANG: language}
-    if language in SUPPORTED_VOICES:
-        opt[CONF_LANG] = SUPPORTED_VOICES[language]
-        opt['voice'] = language
-    opt = {**config, **opt, **(options or {})}
+        lang = opt.get(CONF_LANG) or language or DEFAULT_LANG
+        voice = opt.get('voice') or SUPPORTED_LANGUAGES.get(lang) or DEFAULT_VOICE
 
-    lang = opt.get(CONF_LANG) or language or DEFAULT_LANG
-    voice = opt.get('voice') or SUPPORTED_LANGUAGES.get(lang) or 'zh-CN-XiaoxiaoNeural'
+        for f in self._style_options:
+            if f in opt:
+                _LOGGER.warning(
+                    'Edge TTS options style/styledegree/role are no longer supported, '
+                    'please remove them from your automation or script. '
+                    'See: https://github.com/hasscc/hass-edge-tts/issues/8'
+                )
+                break
 
-    # 检查已弃用的样式选项
-    for f in style_options:
-        v = opt.get(f)
-        if v is not None:
-            _LOGGER.warning(
-                'Edge TTS options style/styledegree/role are no longer supported, '
-                'please remove them from your automation or script. '
-                'See: https://github.com/hasscc/hass-edge-tts/issues/8'
-            )
-            break
+        _LOGGER.debug('%s: %s', self.name, [message, opt])
+        mp3 = b''
+        start_time = time.perf_counter()
+        tts = edge_tts.Communicate(
+            message,
+            voice=voice,
+            pitch=opt.get('pitch', '+0Hz'),
+            rate=opt.get('rate', '+0%'),
+            volume=opt.get('volume', '+0%'),
+        )
+        try:
+            for chunk in tts.stream_sync():
+                if chunk["type"] == "audio":
+                    mp3 += chunk["data"]
+                else:
+                    _LOGGER.debug("Edge TTS metadata: %s", chunk)
+        except edge_tts.exceptions.NoAudioReceived as exc:
+            _LOGGER.warning("No audio received for text: %s", message)
+            raise HomeAssistantError(f"{self.name}: No audio received: {message}") from exc
+        end_time = time.perf_counter()
+        elapsed_time = (end_time - start_time) * 1000
+        _LOGGER.debug("load tts elapsed_time: %sms", elapsed_time)
+        return mp3
 
-    _LOGGER.debug('%s: %s', name, [message, opt])
-    mp3 = b''
-    start_time = time.perf_counter()
-    tts = EdgeCommunicate(
-        message,
-        voice=voice,
-        pitch=opt.get('pitch', '+0Hz'),
-        rate=opt.get('rate', '+0%'),
-        volume=opt.get('volume', '+0%'),
-    )
-    try:
-        async for chunk in tts.stream():
-            if chunk["type"] == "audio":
-                mp3 += chunk["data"]
-            else:
-                _LOGGER.debug('%s: audio.metadata: %s', name, chunk)
-    except edge_tts.exceptions.NoAudioReceived:
-        _LOGGER.warning('%s: No audio received: %s', name, [message, opt])
-        raise HomeAssistantError(f"{name}: No audio received: {message}")
-    end_time = time.perf_counter()
-    elapsed_time = (end_time - start_time) * 1000
-    _LOGGER.info('load tts elapsed_time: %sms', elapsed_time)
-    return 'mp3', mp3
+    async def async_stream_tts_audio(self, request: TTSAudioRequest) -> TTSAudioResponse:
+        return TTSAudioResponse("mp3", self._process_tts_stream(request))
 
+    async def _process_tts_stream(self, request: TTSAudioRequest) -> AsyncGenerator[bytes]:
+        """Generate speech from an incoming message."""
+        _LOGGER.debug("Starting TTS Stream with options: %s", request.options)
+        count = 0
+        async for message in async_stream_to_sentences(request.message_gen):
+            count += 1
+            for chunk in self.split_text(message, 2 ** count * 10):
+                if not (msg := chunk.strip()):
+                    continue
+                _LOGGER.debug("Streaming tts chunk: %s", msg)
+                yield await self.hass.async_add_executor_job(
+                    self._process_tts_audio,
+                    msg,
+                    request.language,
+                    request.options,
+                )
 
-class EdgeCommunicate(edge_tts.Communicate):
-    """ Edge TTS """
+    def split_text(self, text: str, min_length: int = 100) -> list[str]:
+        separators = ['\n', '。', '.', '，', ',']
+        if len(text) <= min_length:
+            return [text]
+        segments = []
+        current_pos = 0
+        text_len = len(text)
+        while current_pos < text_len:
+            search_start_pos = current_pos + min_length
+            if search_start_pos >= text_len:
+                remaining_text = text[current_pos:]
+                if remaining_text.strip():
+                    segments.append(remaining_text)
+                break
+            best_split_pos = -1
+            search_text = text[search_start_pos:]
+            for sep in separators:
+                found_index = search_text.find(sep)
+                if found_index != -1:
+                    best_split_pos = search_start_pos + found_index
+                    break
+            if best_split_pos == -1:
+                best_split_pos = current_pos + min_length
+            segment = text[current_pos:best_split_pos + 1]
+            segments.append(segment)
+            current_pos = best_split_pos + 1
+        return segments
