@@ -16,7 +16,6 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.util import ulid
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from sentence_stream import async_stream_to_sentences
 
 import edge_tts
 from .const import DOMAIN, SUPPORTED_VOICES, DEFAULT_LANG, DEFAULT_VOICE
@@ -91,7 +90,12 @@ class EdgeTTSEntity(TextToSpeechEntity):
     async def async_get_tts_audio(
         self, message: str, language: str, options: dict[str, Any]
     ) -> TtsAudioType:
-        return 'mp3', await self.hass.async_add_executor_job(
+        return "mp3", await self.async_process_tts_audio(message, language, options)
+
+    async def async_process_tts_audio(
+        self, message: str, language: str, options: dict[str, Any]
+    ) -> bytes | None:
+        return await self.hass.async_add_executor_job(
             self._process_tts_audio,
             message,
             language,
@@ -149,44 +153,18 @@ class EdgeTTSEntity(TextToSpeechEntity):
     async def _process_tts_stream(self, request: TTSAudioRequest) -> AsyncGenerator[bytes]:
         """Generate speech from an incoming message."""
         _LOGGER.debug("Starting TTS Stream with options: %s", request.options)
+        separators = "\n。.，,；;！!？?、"
+        buffer = ""
         count = 0
-        async for message in async_stream_to_sentences(request.message_gen):
+        async for message in request.message_gen:
+            _LOGGER.debug("Streaming tts sentence: %s", message)
             count += 1
-            for chunk in self.split_text(message, 2 ** count * 10):
-                if not (msg := chunk.strip()):
-                    continue
-                _LOGGER.debug("Streaming tts chunk: %s", msg)
-                yield await self.hass.async_add_executor_job(
-                    self._process_tts_audio,
-                    msg,
-                    request.language,
-                    request.options,
-                )
-
-    def split_text(self, text: str, min_length: int = 100) -> list[str]:
-        separators = ['\n', '。', '.', '，', ',']
-        if len(text) <= min_length:
-            return [text]
-        segments = []
-        current_pos = 0
-        text_len = len(text)
-        while current_pos < text_len:
-            search_start_pos = current_pos + min_length
-            if search_start_pos >= text_len:
-                remaining_text = text[current_pos:]
-                if remaining_text.strip():
-                    segments.append(remaining_text)
-                break
-            best_split_pos = -1
-            search_text = text[search_start_pos:]
-            for sep in separators:
-                found_index = search_text.find(sep)
-                if found_index != -1:
-                    best_split_pos = search_start_pos + found_index
-                    break
-            if best_split_pos == -1:
-                best_split_pos = current_pos + min_length
-            segment = text[current_pos:best_split_pos + 1]
-            segments.append(segment)
-            current_pos = best_split_pos + 1
-        return segments
+            min_len = 2 ** count * 10
+            for char in message:
+                buffer += char
+                msg = buffer.strip()
+                if len(msg) >= min_len and char in separators:
+                    yield await self.async_process_tts_audio(msg, request.language, request.options)
+                    buffer = ""
+        if msg := buffer.strip():
+            yield await self.async_process_tts_audio(msg, request.language, request.options)
