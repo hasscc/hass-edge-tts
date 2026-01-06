@@ -1,0 +1,10 @@
+{
+  "domain": "edge_tts",
+  "name": "Edge TTS",
+  "version": "1.0.0",
+  "config_flow": true,
+  "documentation": "https://github.com/rekillicloud/hass-edge-tts",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@rekillicloud"]
+}
