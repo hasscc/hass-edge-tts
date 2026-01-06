@@ -1,11 +1,12 @@
 {
   "domain": "edge_tts",
   "name": "Edge TTS",
-  "version": "0.1.0",
-  "requirements": [
-    "edge-tts>=0.11.0"
-  ],
-  "codeowners": [],
+  "version": "1.0.0",
+  "config_flow": true,
+  "documentation": "https://github.com/rekillicloud/hass-edge-tts",
+  "requirements": ["edge-tts>=0.11.0"],
+  "dependencies": [],
+  "codeowners": ["@rekillicloud"],
   "iot_class": "cloud_polling",
   "homeassistant": "2023.12.0"
 }
