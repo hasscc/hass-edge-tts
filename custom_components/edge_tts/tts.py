@@ -11,7 +11,7 @@ from homeassistant.components.tts import (
     TTSAudioRequest,
     TTSAudioResponse,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.util import ulid
 from homeassistant.helpers.device_registry import DeviceEntryType
@@ -72,6 +72,12 @@ class EdgeTTSEntity(TextToSpeechEntity):
         })
         self._attr_extra_state_attributes["access_tokens"] = access_tokens.copy()
 
+    @callback
+    def async_entity_id_changed(self, old_entity_id: str) -> None:
+        """Update the stored entity ID after a rename."""
+        super().async_entity_id_changed(old_entity_id)
+        self.hass.data[DOMAIN]["tts_entity_id"] = self.entity_id
+
     @property
     def default_language(self) -> str:
         """Return the default language from options."""
@@ -84,7 +90,7 @@ class EdgeTTSEntity(TextToSpeechEntity):
 
     @property
     def supported_options(self) -> list[str]:
-        """Return a list of supported options."""
+        """Return list of supported options."""
         return ['voice'] + self._prosody_options
 
     async def async_get_tts_audio(
@@ -153,7 +159,7 @@ class EdgeTTSEntity(TextToSpeechEntity):
     async def _process_tts_stream(self, request: TTSAudioRequest) -> AsyncGenerator[bytes]:
         """Generate speech from an incoming message."""
         _LOGGER.debug("Starting TTS Stream with options: %s", request.options)
-        separators = ["\n", "。", ". ", "，", ", ", "；", "; ", "！", "! ", "？", "? ", "、"]
+        separators = ["\\n", "。", ". ", "，", ", ", "；", "; ", "！", "! ", "？", "? ", "、"]
         buffer = ""
         count = 0
         async for message in request.message_gen:
