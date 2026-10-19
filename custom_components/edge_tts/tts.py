@@ -18,7 +18,7 @@ from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 import edge_tts
-from .const import DOMAIN, SUPPORTED_VOICES, DEFAULT_LANG, DEFAULT_VOICE
+from .const import DOMAIN, SUPPORTED_VOICES, DEFAULT_LANG, DEFAULT_VOICE, LANGUAGE_ALIASES
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -27,6 +27,9 @@ SUPPORTED_LANGUAGES = {
     **dict(zip(SUPPORTED_VOICES.values(), SUPPORTED_VOICES.keys())),
     DEFAULT_LANG: DEFAULT_VOICE,
 }
+SUPPORTED_LANGUAGES.update({
+    alias: SUPPORTED_LANGUAGES[lang] for alias, lang in LANGUAGE_ALIASES.items()
+})
 
 async def async_setup_entry(
     hass: HomeAssistant,
