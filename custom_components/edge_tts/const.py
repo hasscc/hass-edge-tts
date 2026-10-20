@@ -2,6 +2,12 @@ DOMAIN = "edge_tts"
 DEFAULT_LANG = "zh-CN"
 DEFAULT_VOICE = "zh-CN-XiaoxiaoNeural"
 
+# Language codes that no voice uses, mapped to one that does.
+# Home Assistant and Whisper use `yue` for Cantonese.
+LANGUAGE_ALIASES = {
+    'yue': 'zh-HK',
+}
+
 # https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/voices/list?trustedclienttoken=6A5AA1D4EAFF4E9FB37E23D68491D6F4
 SUPPORTED_VOICES = {
     'zh-CN-XiaoxiaoNeural': 'zh-CN',

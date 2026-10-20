@@ -2,13 +2,16 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.components.tts import CONF_LANG
-from .const import DOMAIN, SUPPORTED_VOICES
+from .const import DOMAIN, SUPPORTED_VOICES, LANGUAGE_ALIASES
 from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig, SelectSelectorMode
 
 SUPPORTED_LANGUAGES_LIST = {
     **dict(zip(SUPPORTED_VOICES.values(), SUPPORTED_VOICES.keys())),
     'zh-CN': 'zh-CN-XiaoxiaoNeural',
 }
+SUPPORTED_LANGUAGES_LIST.update({
+    alias: SUPPORTED_LANGUAGES_LIST[lang] for alias, lang in LANGUAGE_ALIASES.items()
+})
 
 SUPPORTED_LANGUAGES = list([*SUPPORTED_LANGUAGES_LIST.keys(), *SUPPORTED_VOICES.keys()])
 
